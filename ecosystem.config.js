@@ -3,8 +3,9 @@ module.exports = {
     {
       name: 'vd-frontend',
       cwd: './frontend',
-      script: 'npm',
-      args: 'run start',
+      script: 'node_modules/.bin/next',
+      args: 'start',
+      exec_mode: 'fork',
       env: {
         NODE_ENV: 'production',
         PORT: 3000,
