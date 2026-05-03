@@ -19,7 +19,7 @@ module.exports = {
       name: 'vd-backend',
       cwd: './backend',
       script: 'node',
-      args: 'dist/server.js',
+      args: '--env-file=.env dist/server.js',
       env: {
         NODE_ENV: 'production',
         PORT: 3001,
