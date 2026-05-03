@@ -10,6 +10,7 @@ import downloadRoutes from './routes/download.js';
 import progressRoutes from './routes/progress.js';
 import fileRoutes from './routes/file.js';
 import healthRoutes from './routes/health.js';
+import thumbnailRoutes from './routes/thumbnail.js';
 import { cleanupOrphanedDirs } from './workers/downloadWorker.js';
 
 // Validate required environment variables
@@ -49,6 +50,7 @@ async function start() {
   await fastify.register(progressRoutes);
   await fastify.register(fileRoutes);
   await fastify.register(healthRoutes);
+  await fastify.register(thumbnailRoutes);
 
   // Start server
   await fastify.listen({ port: PORT, host: '0.0.0.0' });

@@ -18,13 +18,17 @@ function formatDuration(seconds: number): string {
 export function MediaPreview({ mediaInfo }: MediaPreviewProps) {
   const [imgError, setImgError] = useState(false);
 
+  const thumbnailSrc = mediaInfo.thumbnailUrl
+    ? `/api/thumbnail?url=${encodeURIComponent(mediaInfo.thumbnailUrl)}`
+    : '';
+
   return (
     <div className="flex gap-3 p-3 rounded-xl border border-gray-800 bg-[#111827]">
       {/* Thumbnail — fixed small size */}
       <div className="relative w-28 h-20 flex-shrink-0 rounded-lg overflow-hidden bg-gray-900">
-        {mediaInfo.thumbnailUrl && !imgError ? (
+        {thumbnailSrc && !imgError ? (
           <img
-            src={mediaInfo.thumbnailUrl}
+            src={thumbnailSrc}
             alt={mediaInfo.title}
             className="w-full h-full object-cover"
             loading="eager"
