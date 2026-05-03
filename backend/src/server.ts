@@ -1,6 +1,6 @@
+import './env.js';
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
-import dotenv from 'dotenv';
 import RedisLib from 'ioredis';
 import { parseRedisUrl } from './lib/redisOpts.js';
 import rateLimiterPlugin from './plugins/rateLimiter.js';
@@ -11,8 +11,6 @@ import progressRoutes from './routes/progress.js';
 import fileRoutes from './routes/file.js';
 import healthRoutes from './routes/health.js';
 import { cleanupOrphanedDirs } from './workers/downloadWorker.js';
-
-dotenv.config();
 
 // Validate required environment variables
 const REQUIRED_ENV_VARS = ['REDIS_URL', 'TURNSTILE_SECRET_KEY'];
