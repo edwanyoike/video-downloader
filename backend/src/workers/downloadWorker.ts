@@ -16,7 +16,12 @@ const FILE_CLEANUP_DELAY_MS = 60_000;
 const ORPHAN_CLEANUP_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
 export const downloadQueue = new Bull<DownloadJobData>('downloads', {
-  createClient: () => new RedisLib.default(REDIS_URL),
+  createClient: (type) => {
+    const opts = type === 'client'
+      ? {}
+      : { enableReadyCheck: false, maxRetriesPerRequest: null };
+    return new RedisLib.default(REDIS_URL, opts);
+  },
 });
 
 // Startup sweep: remove orphaned temp directories older than 10 minutes
