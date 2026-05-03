@@ -42,7 +42,7 @@ fi
 # ── Backend ──────────────────────────────────────────────────────────
 log "Installing backend dependencies..."
 cd "$APP_DIR/backend"
-npm install --omit=dev
+npm install
 
 log "Building backend..."
 npm run build
@@ -50,7 +50,7 @@ npm run build
 # ── Frontend ─────────────────────────────────────────────────────────
 log "Installing frontend dependencies..."
 cd "$APP_DIR/frontend"
-npm install --omit=dev
+npm install
 
 log "Building frontend..."
 npm run build
