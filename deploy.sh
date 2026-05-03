@@ -21,8 +21,8 @@ warn() { echo -e "${YELLOW}[deploy]${NC} $1"; }
 fail() { echo -e "${RED}[deploy]${NC} $1"; exit 1; }
 
 # ── Must run as root ──────────────────────────────────────────────────
-if [[ $EUID -ne 0 ]]; then
-  fail "Run as root: sudo ./deploy.sh"
+if [[ $(id -u) -ne 0 ]]; then
+  fail "Run as root: sudo bash deploy.sh"
 fi
 
 # ── Pull latest code ─────────────────────────────────────────────────
@@ -32,43 +32,47 @@ git pull
 
 # ── Update yt-dlp ────────────────────────────────────────────────────
 if [[ -f "$YTDLP_SRC" ]]; then
-  log "Copying yt-dlp to $YTDLP_DEST..."
+  log "Updating yt-dlp..."
   cp "$YTDLP_SRC" "$YTDLP_DEST"
   chmod 755 "$YTDLP_DEST"
 else
-  warn "yt-dlp not found at $YTDLP_SRC — skipping copy"
+  warn "yt-dlp not found at $YTDLP_SRC — skipping"
 fi
 
 # ── Backend ──────────────────────────────────────────────────────────
-log "Installing backend dependencies..."
+log "Backend: clean install..."
 cd "$APP_DIR/backend"
-npm install
+rm -rf node_modules dist
+npm ci
 
-log "Building backend..."
-npm run build
+log "Backend: building..."
+npx tsc
+
+log "Backend: pruning dev dependencies..."
+npm prune --omit=dev
 
 # ── Frontend ─────────────────────────────────────────────────────────
-log "Installing frontend dependencies..."
+log "Frontend: clean install..."
 cd "$APP_DIR/frontend"
-npm install
+rm -rf node_modules .next
+npm ci
 
-log "Building frontend..."
-npm run build
+log "Frontend: building..."
+npx next build
+
+log "Frontend: pruning dev dependencies..."
+npm prune --omit=dev
 
 # ── Permissions ──────────────────────────────────────────────────────
-log "Setting ownership to $APP_USER..."
+log "Setting ownership..."
 chown -R "$APP_USER:$APP_USER" "$APP_DIR"
-
-# Protect .env files
 chmod 600 "$APP_DIR/backend/.env" 2>/dev/null || true
 chmod 600 "$APP_DIR/frontend/.env" 2>/dev/null || true
 
-# Temp directory
 mkdir -p /tmp/vd-jobs
 chown "$APP_USER:$APP_USER" /tmp/vd-jobs
 chmod 750 /tmp/vd-jobs
 
-# PM2 home
 mkdir -p "$PM2_HOME"
 chown "$APP_USER:$APP_USER" "$PM2_HOME"
 
@@ -86,37 +90,34 @@ if [[ -f "$NGINX_SRC" ]]; then
   fi
 fi
 
-# ── PM2 restart ──────────────────────────────────────────────────────
-log "Restarting PM2 processes..."
-export PM2_HOME="$PM2_HOME"
-
+# ── PM2 ──────────────────────────────────────────────────────────────
+log "Restarting services..."
 sudo -u "$APP_USER" PM2_HOME="$PM2_HOME" pm2 delete all 2>/dev/null || true
 sudo -u "$APP_USER" PM2_HOME="$PM2_HOME" pm2 start "$APP_DIR/ecosystem.config.js"
 sudo -u "$APP_USER" PM2_HOME="$PM2_HOME" pm2 save
 
 # ── Verify ───────────────────────────────────────────────────────────
-sleep 3
+log "Waiting for services to start..."
+sleep 4
 
-BACKEND_OK=false
-FRONTEND_OK=false
-
+OK=true
 if ss -tlnp | grep -q ':3001'; then
-  BACKEND_OK=true
-  log "Backend listening on :3001 ✓"
+  log "Backend  :3001 ✓"
 else
-  warn "Backend NOT listening on :3001"
+  warn "Backend  :3001 ✗"
+  OK=false
 fi
 
 if ss -tlnp | grep -q ':3000'; then
-  FRONTEND_OK=true
-  log "Frontend listening on :3000 ✓"
+  log "Frontend :3000 ✓"
 else
-  warn "Frontend NOT listening on :3000"
+  warn "Frontend :3000 ✗"
+  OK=false
 fi
 
 echo ""
-if $BACKEND_OK && $FRONTEND_OK; then
-  log "Deploy complete. Site is live at https://dl.evarein.com"
+if $OK; then
+  log "Deploy complete — https://dl.evarein.com is live."
 else
-  warn "Deploy finished with issues. Check: sudo -u $APP_USER PM2_HOME=$PM2_HOME pm2 logs"
+  warn "Issues detected. Check: sudo -u $APP_USER PM2_HOME=$PM2_HOME pm2 logs"
 fi
