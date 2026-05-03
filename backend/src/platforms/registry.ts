@@ -1,4 +1,4 @@
-import { PlatformConfig, PlatformOption, DownloadOptions } from '../types';
+import { PlatformConfig, PlatformOption, DownloadOptions } from '../types.js';
 
 // Base yt-dlp args shared by all platforms
 function baseArgs(opts: DownloadOptions): string[] {

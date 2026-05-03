@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { sanitizeFilename } from '../../lib/sanitizeFilename';
+import { sanitizeFilename } from '../../lib/sanitizeFilename.js';
 
 describe('sanitizeFilename', () => {
   it('handles a normal title', () => {

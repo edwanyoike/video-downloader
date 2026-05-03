@@ -1,6 +1,6 @@
 import dns from 'node:dns/promises';
-import { ValidationResult } from '../types';
-import { detectPlatform } from '../platforms/registry';
+import { ValidationResult } from '../types.js';
+import { detectPlatform } from '../platforms/registry.js';
 
 /**
  * Checks whether an IP address falls within private/reserved ranges.

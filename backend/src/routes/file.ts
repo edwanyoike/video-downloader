@@ -3,9 +3,9 @@ import fs from 'node:fs';
 import fsPromises from 'node:fs/promises';
 import path from 'node:path';
 import mime from 'mime-types';
-import { downloadQueue, getJobDir } from '../workers/downloadWorker';
-import { sanitizeFilename } from '../lib/sanitizeFilename';
-import { getClientIp } from '../plugins/rateLimiter';
+import { downloadQueue, getJobDir } from '../workers/downloadWorker.js';
+import { sanitizeFilename } from '../lib/sanitizeFilename.js';
+import { getClientIp } from '../plugins/rateLimiter.js';
 
 interface FileParams {
   jobId: string;

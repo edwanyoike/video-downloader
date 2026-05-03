@@ -1,8 +1,8 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { validateUrl } from '../lib/urlValidator';
-import { fetchMetadata } from '../extractors/ytdlp';
-import { RATE_LIMIT_INFO_RPM } from '../plugins/rateLimiter';
-import type { AppError } from '../types';
+import { validateUrl } from '../lib/urlValidator.js';
+import { fetchMetadata } from '../extractors/ytdlp.js';
+import { RATE_LIMIT_INFO_RPM } from '../plugins/rateLimiter.js';
+import type { AppError } from '../types.js';
 
 interface InfoBody {
   url: string;

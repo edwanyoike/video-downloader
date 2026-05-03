@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { parseMediaInfo } from '../../extractors/ytdlp';
+import { parseMediaInfo } from '../../extractors/ytdlp.js';
 
 // Minimal yt-dlp JSON fixture for a video with both video and audio formats
 const baseVideoFormat = {

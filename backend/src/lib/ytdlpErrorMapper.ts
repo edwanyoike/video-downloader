@@ -1,4 +1,4 @@
-import type { AppError } from '../types';
+import type { AppError } from '../types.js';
 
 interface ErrorPattern {
   pattern: RegExp;

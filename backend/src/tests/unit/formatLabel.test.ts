@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { buildFormatLabel, parseFormatLabel } from '../../lib/formatLabel';
+import { buildFormatLabel, parseFormatLabel } from '../../lib/formatLabel.js';
 
 describe('buildFormatLabel', () => {
   it('builds a video label with quality and container', () => {

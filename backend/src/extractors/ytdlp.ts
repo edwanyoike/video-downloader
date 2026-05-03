@@ -1,8 +1,8 @@
 import { spawn } from 'node:child_process';
-import type { MediaInfo, FormatOption, SubtitleTrack } from '../types';
-import { classifyYtdlpError } from '../lib/ytdlpErrorMapper';
-import { buildFormatLabel } from '../lib/formatLabel';
-import { detectPlatform } from '../platforms/registry';
+import type { MediaInfo, FormatOption, SubtitleTrack } from '../types.js';
+import { classifyYtdlpError } from '../lib/ytdlpErrorMapper.js';
+import { buildFormatLabel } from '../lib/formatLabel.js';
+import { detectPlatform } from '../platforms/registry.js';
 
 const TIMEOUT_MS = 20_000;
 

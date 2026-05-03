@@ -1,5 +1,5 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
-import { verifyTurnstileToken } from '../../lib/turnstile';
+import { verifyTurnstileToken } from '../../lib/turnstile.js';
 
 // Helper to build a mock Response-like object
 function mockResponse(body: unknown, ok = true, status = 200): Response {

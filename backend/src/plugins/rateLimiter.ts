@@ -1,7 +1,7 @@
 import fp from 'fastify-plugin';
 import rateLimit from '@fastify/rate-limit';
 import type { FastifyInstance, FastifyRequest } from 'fastify';
-import type Redis from 'ioredis';
+import type RedisLib from 'ioredis';
 
 const RATE_LIMIT_INFO_RPM = parseInt(process.env.RATE_LIMIT_INFO_RPM || '20', 10);
 const RATE_LIMIT_MAX_CONCURRENT = parseInt(process.env.RATE_LIMIT_MAX_CONCURRENT || '5', 10);
@@ -19,7 +19,7 @@ export function concurrentJobKey(ip: string): string {
 }
 
 export async function checkAndIncrementConcurrentJobs(
-  redis: Redis,
+  redis: RedisLib.default,
   ip: string,
 ): Promise<boolean> {
   // Returns true if the job can proceed, false if limit exceeded
@@ -38,7 +38,7 @@ export async function checkAndIncrementConcurrentJobs(
   return true;
 }
 
-export async function decrementConcurrentJobs(redis: Redis, ip: string): Promise<void> {
+export async function decrementConcurrentJobs(redis: RedisLib.default, ip: string): Promise<void> {
   const key = concurrentJobKey(ip);
   const current = await redis.get(key);
   if (current && parseInt(current, 10) > 0) {

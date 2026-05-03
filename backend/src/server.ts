@@ -1,7 +1,7 @@
 import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import dotenv from 'dotenv';
-import Redis from 'ioredis';
+import RedisLib from 'ioredis';
 import rateLimiterPlugin from './plugins/rateLimiter.js';
 import securityHeadersPlugin from './plugins/securityHeaders.js';
 import infoRoutes from './routes/info.js';
@@ -27,7 +27,7 @@ const fastify = Fastify({ logger: true });
 const PORT = parseInt(process.env.PORT || '3001', 10);
 
 // Decorate fastify with Redis instance for rate limiter and concurrent job tracking
-const redis = new Redis(process.env.REDIS_URL!);
+const redis = new RedisLib.default(process.env.REDIS_URL!);
 fastify.decorate('redis', redis);
 
 async function start() {

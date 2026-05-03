@@ -1,5 +1,5 @@
 import type { FastifyInstance } from 'fastify';
-import { downloadQueue } from '../workers/downloadWorker';
+import { downloadQueue } from '../workers/downloadWorker.js';
 
 export default async function healthRoutes(fastify: FastifyInstance) {
   fastify.get('/health', async (_req, reply) => {

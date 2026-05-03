@@ -1,5 +1,5 @@
 import { describe, it, expect } from 'vitest';
-import { classifyYtdlpError } from '../../lib/ytdlpErrorMapper';
+import { classifyYtdlpError } from '../../lib/ytdlpErrorMapper.js';
 
 function assertNoStderrLeak(result: ReturnType<typeof classifyYtdlpError>, stderr: string) {
   expect(result.message).not.toBe(stderr);

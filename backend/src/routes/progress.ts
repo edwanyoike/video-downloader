@@ -1,5 +1,5 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { downloadQueue } from '../workers/downloadWorker';
+import { downloadQueue } from '../workers/downloadWorker.js';
 
 interface ProgressParams {
   jobId: string;

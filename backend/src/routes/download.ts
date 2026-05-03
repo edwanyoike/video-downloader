@@ -1,10 +1,10 @@
 import type { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
-import { validateUrl } from '../lib/urlValidator';
-import { verifyTurnstileToken } from '../lib/turnstile';
-import { getClientIp, checkAndIncrementConcurrentJobs } from '../plugins/rateLimiter';
-import { downloadQueue } from '../workers/downloadWorker';
-import type { DownloadJobData } from '../types';
-import type Redis from 'ioredis';
+import { validateUrl } from '../lib/urlValidator.js';
+import { verifyTurnstileToken } from '../lib/turnstile.js';
+import { getClientIp, checkAndIncrementConcurrentJobs } from '../plugins/rateLimiter.js';
+import { downloadQueue } from '../workers/downloadWorker.js';
+import type { DownloadJobData } from '../types.js';
+import type RedisLib from 'ioredis';
 
 interface DownloadBody {
   url: string;
@@ -52,7 +52,7 @@ export default async function downloadRoutes(fastify: FastifyInstance) {
       }
 
       // 2. Check concurrent job limit
-      const redis = (fastify as unknown as { redis: Redis }).redis;
+      const redis = (fastify as unknown as { redis: RedisLib.default }).redis;
       const canProceed = await checkAndIncrementConcurrentJobs(redis, clientIp);
       if (!canProceed) {
         return reply.status(429).send({
