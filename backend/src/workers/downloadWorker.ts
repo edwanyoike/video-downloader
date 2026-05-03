@@ -2,9 +2,9 @@ import Bull from 'bull';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
-import type { DownloadJobData, JobProgressData } from '../types';
-import { classifyYtdlpError } from '../lib/ytdlpErrorMapper';
-import { PLATFORM_REGISTRY } from '../platforms/registry';
+import type { DownloadJobData, JobProgressData } from '../types.js';
+import { classifyYtdlpError } from '../lib/ytdlpErrorMapper.js';
+import { PLATFORM_REGISTRY } from '../platforms/registry.js';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const TEMP_DIR = process.env.TEMP_DIR || '/tmp/vd-jobs';
