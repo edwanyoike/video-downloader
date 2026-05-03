@@ -4,6 +4,7 @@ module.exports = {
       name: 'vd-frontend',
       cwd: './frontend',
       script: 'node_modules/.bin/next',
+      interpreter: '/usr/local/bin/node',
       args: 'start',
       exec_mode: 'fork',
       env: {
@@ -18,8 +19,9 @@ module.exports = {
     {
       name: 'vd-backend',
       cwd: './backend',
-      script: 'node',
-      args: '--env-file=.env dist/server.js',
+      script: 'dist/server.js',
+      interpreter: '/usr/local/bin/node',
+      args: '--env-file=.env',
       env: {
         NODE_ENV: 'production',
         PORT: 3001,

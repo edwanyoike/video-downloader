@@ -48,9 +48,6 @@ npm ci
 log "Backend: building..."
 npx tsc
 
-log "Backend: pruning dev dependencies..."
-npm prune --omit=dev
-
 # ── Frontend ─────────────────────────────────────────────────────────
 log "Frontend: clean install..."
 cd "$APP_DIR/frontend"
@@ -59,9 +56,6 @@ npm ci
 
 log "Frontend: building..."
 npx next build
-
-log "Frontend: pruning dev dependencies..."
-npm prune --omit=dev
 
 # ── Permissions ──────────────────────────────────────────────────────
 log "Setting ownership..."
@@ -93,12 +87,12 @@ fi
 # ── PM2 ──────────────────────────────────────────────────────────────
 log "Restarting services..."
 sudo -u "$APP_USER" PM2_HOME="$PM2_HOME" pm2 delete all 2>/dev/null || true
-sudo -u "$APP_USER" PM2_HOME="$PM2_HOME" pm2 start "$APP_DIR/ecosystem.config.js"
+sudo -u "$APP_USER" PM2_HOME="$PM2_HOME" PATH="/usr/local/bin:$PATH" pm2 start "$APP_DIR/ecosystem.config.js"
 sudo -u "$APP_USER" PM2_HOME="$PM2_HOME" pm2 save
 
 # ── Verify ───────────────────────────────────────────────────────────
 log "Waiting for services to start..."
-sleep 4
+sleep 8
 
 OK=true
 if ss -tlnp | grep -q ':3001'; then
