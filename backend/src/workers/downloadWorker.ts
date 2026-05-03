@@ -6,6 +6,7 @@ import RedisLib from 'ioredis';
 import type { DownloadJobData, JobProgressData } from '../types.js';
 import { classifyYtdlpError } from '../lib/ytdlpErrorMapper.js';
 import { PLATFORM_REGISTRY } from '../platforms/registry.js';
+import { parseRedisUrl } from '../lib/redisOpts.js';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const TEMP_DIR = process.env.TEMP_DIR || '/tmp/vd-jobs';
@@ -17,10 +18,15 @@ const ORPHAN_CLEANUP_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
 export const downloadQueue = new Bull<DownloadJobData>('downloads', {
   createClient: (type) => {
-    const opts = type === 'client'
-      ? {}
-      : { enableReadyCheck: false, maxRetriesPerRequest: null };
-    return new RedisLib.default(REDIS_URL, opts);
+    const base = parseRedisUrl(REDIS_URL);
+    if (type === 'client') {
+      return new RedisLib.default(base);
+    }
+    return new RedisLib.default({
+      ...base,
+      enableReadyCheck: false,
+      maxRetriesPerRequest: null,
+    });
   },
 });
 
