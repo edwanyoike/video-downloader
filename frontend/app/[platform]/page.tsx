@@ -102,10 +102,10 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
     <main className="max-w-2xl mx-auto px-4 py-12">
       <div className="text-center mb-8">
         <h1 className="text-3xl font-bold mb-2">{platformConfig.displayName} Downloader</h1>
-        <p className="text-gray-500">
+        <p className="text-gray-500 dark:text-gray-400">
           Paste a {platformConfig.displayName} video URL to download it.
         </p>
-        <div className="mt-2 text-xs text-gray-400">
+        <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
           Accepted domains: {platformConfig.domains.join(', ')}
         </div>
       </div>
@@ -123,7 +123,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       />
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
           {error}
         </div>
       )}
@@ -179,7 +179,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       )}
 
       <div className="mt-8 text-center">
-        <a href="/" className="text-blue-600 hover:underline text-sm">
+        <a href="/" className="text-blue-500 dark:text-blue-400 hover:underline text-sm">
           ← All platforms
         </a>
       </div>

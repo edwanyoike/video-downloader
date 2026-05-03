@@ -66,11 +66,11 @@ export function UrlInput({ platformId, onValidUrl, onSubmit, onClear }: UrlInput
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder="Paste video URL here..."
-          className="w-full px-4 py-3 border rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
+          className="w-full px-4 py-3 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 placeholder-gray-400 dark:placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-500 text-base"
           autoFocus
         />
         {platformName && (
-          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-gray-100 px-2 py-1 rounded text-gray-600">
+          <span className="absolute right-3 top-1/2 -translate-y-1/2 text-xs bg-gray-200 dark:bg-gray-700 px-2 py-1 rounded text-gray-700 dark:text-gray-300">
             {platformName}
           </span>
         )}
@@ -81,7 +81,7 @@ export function UrlInput({ platformId, onValidUrl, onSubmit, onClear }: UrlInput
       {!validationError && value.trim() && detectedPlatform && (
         <button
           onClick={onSubmit}
-          className="mt-3 w-full py-2 px-4 bg-gray-900 hover:bg-gray-800 text-white font-medium rounded-lg transition-colors"
+          className="mt-3 w-full py-2 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
         >
           Get Video Info
         </button>

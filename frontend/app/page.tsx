@@ -93,7 +93,7 @@ export default function HomePage() {
   return (
     <main className="max-w-2xl mx-auto px-4 py-12">
       <h1 className="text-3xl font-bold text-center mb-2">Video Downloader</h1>
-      <p className="text-center text-gray-500 mb-8">
+      <p className="text-center text-gray-500 dark:text-gray-400 mb-8">
         Paste a video URL from any supported platform to download it.
       </p>
 
@@ -110,14 +110,14 @@ export default function HomePage() {
       />
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
           {error}
         </div>
       )}
 
       {loading && (
         <div className="mt-6 flex justify-center">
-          <div className="animate-pulse text-gray-400">Fetching video info...</div>
+          <div className="animate-pulse text-gray-400 dark:text-gray-500">Fetching video info...</div>
         </div>
       )}
 
@@ -165,14 +165,14 @@ export default function HomePage() {
         </div>
       )}
 
-      <div className="mt-12 border-t pt-8">
+      <div className="mt-12 border-t border-gray-200 dark:border-gray-700 pt-8">
         <h2 className="text-lg font-semibold mb-4 text-center">Supported Platforms</h2>
         <div className="grid grid-cols-3 sm:grid-cols-4 gap-3">
           {platforms.map((p) => (
             <a
               key={p.id}
               href={`/${p.id}`}
-              className="flex items-center justify-center p-3 rounded-lg border hover:bg-gray-50 transition-colors text-sm font-medium"
+              className="flex items-center justify-center p-3 rounded-lg border border-gray-200 dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-800 transition-colors text-sm font-medium"
             >
               {p.displayName}
             </a>
