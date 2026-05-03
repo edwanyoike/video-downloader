@@ -74,10 +74,11 @@ export default function HomePage() {
   };
 
   const handleDownload = async () => {
-    if (!url || !selectedFormat || !turnstileRef.current) return;
+    if (!url || !selectedFormat) return;
     setError(null);
+    setLoading(true);
     try {
-      const token = await turnstileRef.current.getToken();
+      const token = turnstileRef.current ? await turnstileRef.current.getToken() : '';
       const res = await fetch(`${API_BASE}/api/download`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -99,6 +100,8 @@ export default function HomePage() {
       setJobId(id);
     } catch {
       setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -183,9 +186,10 @@ export default function HomePage() {
 
           <button
             onClick={handleDownload}
-            className="w-full py-3 px-4 font-medium rounded-lg transition-all text-white bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 shadow-lg shadow-emerald-500/20"
+            disabled={loading}
+            className="w-full py-3 px-4 font-medium rounded-lg transition-all text-white bg-gradient-to-r from-emerald-500 to-cyan-500 hover:from-emerald-400 hover:to-cyan-400 shadow-lg shadow-emerald-500/20 disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            Download
+            {loading ? 'Starting download...' : 'Download'}
           </button>
         </div>
       )}

@@ -82,10 +82,11 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
   };
 
   const handleDownload = async () => {
-    if (!url || !selectedFormat || !turnstileRef.current) return;
+    if (!url || !selectedFormat) return;
     setError(null);
+    setLoading(true);
     try {
-      const token = await turnstileRef.current.getToken();
+      const token = turnstileRef.current ? await turnstileRef.current.getToken() : '';
       const res = await fetch(`${API_BASE}/api/download`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -107,6 +108,8 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       setJobId(id);
     } catch {
       setError('Network error. Please try again.');
+    } finally {
+      setLoading(false);
     }
   };
 
