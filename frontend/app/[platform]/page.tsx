@@ -14,6 +14,20 @@ import type { MediaInfo, FormatOption } from '@/lib/types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
 
+const PLATFORM_COLORS: Record<string, string> = {
+  youtube: '#ff0000',
+  instagram: '#e1306c',
+  tiktok: '#00f2ea',
+  twitter: '#1da1f2',
+  facebook: '#1877f2',
+  reddit: '#ff4500',
+  vimeo: '#1ab7ea',
+  twitch: '#9146ff',
+  pinterest: '#e60023',
+  linkedin: '#0a66c2',
+  dailymotion: '#00d2f3',
+};
+
 export default function PlatformPage({ params }: { params: Promise<{ platform: string }> }) {
   const { platform: platformId } = use(params);
   const platformConfig = PLATFORM_REGISTRY.get(platformId);
@@ -21,6 +35,8 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
   if (!platformConfig) {
     notFound();
   }
+
+  const color = PLATFORM_COLORS[platformId] || '#3b82f6';
 
   const [url, setUrl] = useState('');
   const [mediaInfo, setMediaInfo] = useState<MediaInfo | null>(null);
@@ -94,19 +110,20 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
     }
   };
 
-  const acceptedFormats = platformConfig.urlPatterns
-    .map((p) => p.source.replace(/\^https:\\\/\\\//g, '').replace(/\\/g, ''))
-    .slice(0, 3);
-
   return (
-    <main className="max-w-2xl mx-auto px-4 py-12">
-      <div className="text-center mb-8">
-        <h1 className="text-3xl font-bold mb-2">{platformConfig.displayName} Downloader</h1>
-        <p className="text-gray-500 dark:text-gray-400">
+    <main className="max-w-2xl mx-auto px-4 py-16">
+      <div className="text-center mb-10">
+        <h1
+          className="text-4xl font-bold mb-3"
+          style={{ color }}
+        >
+          {platformConfig.displayName} Downloader
+        </h1>
+        <p className="text-gray-400">
           Paste a {platformConfig.displayName} video URL to download it.
         </p>
-        <div className="mt-2 text-xs text-gray-400 dark:text-gray-500">
-          Accepted domains: {platformConfig.domains.join(', ')}
+        <div className="mt-2 text-xs text-gray-500">
+          Accepted: {platformConfig.domains.join(', ')}
         </div>
       </div>
 
@@ -123,14 +140,14 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       />
 
       {error && (
-        <div className="mt-4 p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg text-red-700 dark:text-red-400 text-sm">
+        <div className="mt-4 p-3 rounded-lg border border-red-500/30 bg-red-500/10 text-red-400 text-sm">
           {error}
         </div>
       )}
 
       {loading && (
         <div className="mt-6 flex justify-center">
-          <div className="animate-pulse text-gray-400">Fetching video info...</div>
+          <div className="animate-pulse" style={{ color }}>Fetching video info...</div>
         </div>
       )}
 
@@ -165,7 +182,11 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
 
           <button
             onClick={handleDownload}
-            className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-colors"
+            className="w-full py-3 px-4 font-medium rounded-xl transition-all text-white shadow-lg"
+            style={{
+              background: `linear-gradient(135deg, ${color}, ${color}cc)`,
+              boxShadow: `0 4px 20px ${color}30`,
+            }}
           >
             Download
           </button>
@@ -179,7 +200,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       )}
 
       <div className="mt-8 text-center">
-        <a href="/" className="text-blue-500 dark:text-blue-400 hover:underline text-sm">
+        <a href="/" className="text-sm text-gray-500 hover:text-emerald-400 transition-colors">
           ← All platforms
         </a>
       </div>
