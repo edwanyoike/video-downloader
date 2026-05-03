@@ -145,7 +145,7 @@ describe('AppError shape', () => {
     ['unknown error', 1],
   ];
 
-  it.each(cases)('result for stderr=%j exitCode=%i has all required fields', (stderr, exitCode) => {
+  it.each(cases)('result for stderr=%j exitCode=%i has all required fields', (stderr: string, exitCode: number) => {
     const result = classifyYtdlpError(stderr, exitCode);
     expect(result).toHaveProperty('code');
     expect(result).toHaveProperty('message');
