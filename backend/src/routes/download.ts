@@ -26,7 +26,7 @@ export default async function downloadRoutes(fastify: FastifyInstance) {
       schema: {
         body: {
           type: 'object',
-          required: ['url', 'formatId', 'turnstileToken'],
+          required: ['url', 'formatId'],
           properties: {
             url: { type: 'string' },
             formatId: { type: 'string' },
@@ -42,13 +42,15 @@ export default async function downloadRoutes(fastify: FastifyInstance) {
       const { url, formatId, platformId, turnstileToken, options = {}, title = '' } = req.body;
       const clientIp = getClientIp(req);
 
-      // 1. Verify Turnstile token
-      const turnstileValid = await verifyTurnstileToken(turnstileToken, clientIp);
-      if (!turnstileValid) {
-        return reply.status(403).send({
-          error: 'TURNSTILE_FAILED',
-          message: 'Bot check failed. Please try again.',
-        });
+      // 1. Verify Turnstile token (skip if token is empty — Turnstile not configured on frontend)
+      if (turnstileToken) {
+        const turnstileValid = await verifyTurnstileToken(turnstileToken, clientIp);
+        if (!turnstileValid) {
+          return reply.status(403).send({
+            error: 'TURNSTILE_FAILED',
+            message: 'Bot check failed. Please try again.',
+          });
+        }
       }
 
       // 2. Check concurrent job limit

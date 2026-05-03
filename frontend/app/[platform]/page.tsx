@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useRef, use } from 'react';
+import { useState, useRef, use, useCallback } from 'react';
 import { notFound } from 'next/navigation';
 import { PLATFORM_REGISTRY } from '@/lib/platformRegistry';
 import { UrlInput } from '@/components/UrlInput';
@@ -13,6 +13,7 @@ import { TikTokWatermarkToggle } from '@/components/TikTokWatermarkToggle';
 import type { MediaInfo, FormatOption } from '@/lib/types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
+const HAS_TURNSTILE = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
 
 const PLATFORM_COLORS: Record<string, string> = {
   youtube: '#ff0000',
@@ -42,6 +43,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
   const [mediaInfo, setMediaInfo] = useState<MediaInfo | null>(null);
   const [selectedFormat, setSelectedFormat] = useState<FormatOption | null>(null);
   const [loading, setLoading] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [jobId, setJobId] = useState<string | null>(null);
   const [downloadOptions, setDownloadOptions] = useState<Record<string, unknown>>({});
@@ -72,8 +74,6 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       }
       const info: MediaInfo = await res.json();
       setMediaInfo(info);
-      const defaultFmt = info.formats.find((f) => f.isDefault) || info.formats[0];
-      setSelectedFormat(defaultFmt || null);
     } catch {
       setError('Network error. Please try again.');
     } finally {
@@ -81,18 +81,22 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
     }
   };
 
-  const handleDownload = async () => {
-    if (!url || !selectedFormat) return;
+  const handleFormatSelect = useCallback(async (format: FormatOption) => {
+    if (!url || downloading) return;
+    setSelectedFormat(format);
     setError(null);
-    setLoading(true);
+    setDownloading(true);
     try {
-      const token = turnstileRef.current ? await turnstileRef.current.getToken() : '';
+      let token = '';
+      if (HAS_TURNSTILE && turnstileRef.current) {
+        token = await turnstileRef.current.getToken();
+      }
       const res = await fetch(`${API_BASE}/api/download`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           url,
-          formatId: selectedFormat.formatId,
+          formatId: format.formatId,
           platformId,
           turnstileToken: token,
           title: mediaInfo?.title || '',
@@ -109,17 +113,14 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
     } catch {
       setError('Network error. Please try again.');
     } finally {
-      setLoading(false);
+      setDownloading(false);
     }
-  };
+  }, [url, platformId, mediaInfo, downloadOptions, downloading]);
 
   return (
     <main className="max-w-2xl mx-auto px-4 py-16">
       <div className="text-center mb-10">
-        <h1
-          className="text-4xl font-bold mb-3"
-          style={{ color }}
-        >
+        <h1 className="text-4xl font-bold mb-3" style={{ color }}>
           {platformConfig.displayName} Downloader
         </h1>
         <p className="text-gray-400">
@@ -148,7 +149,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
         </div>
       )}
 
-      {loading && (
+      {loading && !downloading && (
         <div className="mt-6 flex justify-center">
           <div className="animate-pulse" style={{ color }}>Fetching video info...</div>
         </div>
@@ -157,12 +158,6 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       {mediaInfo && !jobId && (
         <div className="mt-6 space-y-4">
           <MediaPreview mediaInfo={mediaInfo} />
-
-          <FormatSelector
-            formats={mediaInfo.formats}
-            selected={selectedFormat}
-            onSelect={setSelectedFormat}
-          />
 
           {platformId === 'youtube' && mediaInfo.subtitles && (
             <YouTubeSubtitleSelector
@@ -181,18 +176,20 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
             />
           )}
 
-          <TurnstileWidget ref={turnstileRef} />
+          <FormatSelector
+            formats={mediaInfo.formats}
+            selected={selectedFormat}
+            onSelect={handleFormatSelect}
+            disabled={downloading}
+          />
 
-          <button
-            onClick={handleDownload}
-            className="w-full py-3 px-4 font-medium rounded-xl transition-all text-white shadow-lg"
-            style={{
-              background: `linear-gradient(135deg, ${color}, ${color}cc)`,
-              boxShadow: `0 4px 20px ${color}30`,
-            }}
-          >
-            Download
-          </button>
+          {downloading && (
+            <div className="flex justify-center">
+              <div className="animate-pulse" style={{ color }}>Starting download...</div>
+            </div>
+          )}
+
+          {HAS_TURNSTILE && <TurnstileWidget ref={turnstileRef} />}
         </div>
       )}
 

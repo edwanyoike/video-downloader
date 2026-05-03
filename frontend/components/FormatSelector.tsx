@@ -6,6 +6,7 @@ interface FormatSelectorProps {
   formats: FormatOption[];
   selected: FormatOption | null;
   onSelect: (format: FormatOption) => void;
+  disabled?: boolean;
 }
 
 function formatFileSize(bytes?: number): string {
@@ -47,11 +48,13 @@ function FormatCard({
   isSelected,
   onSelect,
   accent,
+  disabled,
 }: {
   format: FormatOption;
   isSelected: boolean;
   onSelect: () => void;
   accent: string;
+  disabled?: boolean;
 }) {
   const res = getResolution(format);
   const isHD = res >= 720;
@@ -60,7 +63,8 @@ function FormatCard({
   return (
     <button
       onClick={onSelect}
-      className="w-full p-3 rounded-xl border text-left transition-all active:scale-[0.98]"
+      disabled={disabled}
+      className="w-full p-3 rounded-xl border text-left transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed"
       style={{
         borderColor: isSelected ? accent : '#1e293b',
         backgroundColor: isSelected ? `${accent}10` : '#0f172a',
@@ -115,7 +119,7 @@ function FormatCard({
   );
 }
 
-export function FormatSelector({ formats, selected, onSelect }: FormatSelectorProps) {
+export function FormatSelector({ formats, selected, onSelect, disabled }: FormatSelectorProps) {
   const videoFormats = sortFormats(formats.filter((f) => !f.isAudioOnly));
   const audioFormats = sortFormats(formats.filter((f) => f.isAudioOnly));
 
@@ -144,6 +148,7 @@ export function FormatSelector({ formats, selected, onSelect }: FormatSelectorPr
                 isSelected={selected?.formatId === f.formatId}
                 onSelect={() => onSelect(f)}
                 accent={accent}
+                disabled={disabled}
               />
             ))}
           </div>
@@ -166,6 +171,7 @@ export function FormatSelector({ formats, selected, onSelect }: FormatSelectorPr
                 isSelected={selected?.formatId === f.formatId}
                 onSelect={() => onSelect(f)}
                 accent={accent}
+                disabled={disabled}
               />
             ))}
           </div>
