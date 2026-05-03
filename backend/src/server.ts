@@ -2,14 +2,14 @@ import Fastify from 'fastify';
 import cors from '@fastify/cors';
 import dotenv from 'dotenv';
 import Redis from 'ioredis';
-import rateLimiterPlugin from './plugins/rateLimiter';
-import securityHeadersPlugin from './plugins/securityHeaders';
-import infoRoutes from './routes/info';
-import downloadRoutes from './routes/download';
-import progressRoutes from './routes/progress';
-import fileRoutes from './routes/file';
-import healthRoutes from './routes/health';
-import { cleanupOrphanedDirs } from './workers/downloadWorker';
+import rateLimiterPlugin from './plugins/rateLimiter.js';
+import securityHeadersPlugin from './plugins/securityHeaders.js';
+import infoRoutes from './routes/info.js';
+import downloadRoutes from './routes/download.js';
+import progressRoutes from './routes/progress.js';
+import fileRoutes from './routes/file.js';
+import healthRoutes from './routes/health.js';
+import { cleanupOrphanedDirs } from './workers/downloadWorker.js';
 
 dotenv.config();
 
