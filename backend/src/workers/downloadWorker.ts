@@ -2,6 +2,7 @@ import Bull from 'bull';
 import { spawn } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
+import RedisLib from 'ioredis';
 import type { DownloadJobData, JobProgressData } from '../types.js';
 import { classifyYtdlpError } from '../lib/ytdlpErrorMapper.js';
 import { PLATFORM_REGISTRY } from '../platforms/registry.js';
@@ -14,7 +15,9 @@ const JOB_TIMEOUT_MS = 60_000;
 const FILE_CLEANUP_DELAY_MS = 60_000;
 const ORPHAN_CLEANUP_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
-export const downloadQueue = new Bull<DownloadJobData>('downloads', REDIS_URL);
+export const downloadQueue = new Bull<DownloadJobData>('downloads', {
+  createClient: () => new RedisLib.default(REDIS_URL),
+});
 
 // Startup sweep: remove orphaned temp directories older than 10 minutes
 export async function cleanupOrphanedDirs(): Promise<void> {
