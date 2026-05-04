@@ -5,6 +5,7 @@ import { useState, useEffect, useRef } from 'react';
 interface ProgressBarProps {
   jobId: string;
   apiBase: string;
+  platformColor?: string;
 }
 
 interface ProgressData {
@@ -16,7 +17,8 @@ interface ProgressData {
   fileReady?: boolean;
 }
 
-export function ProgressBar({ jobId, apiBase }: ProgressBarProps) {
+export function ProgressBar({ jobId, apiBase, platformColor }: ProgressBarProps) {
+  const color = platformColor || '#10b981';
   const [progress, setProgress] = useState<ProgressData>({
     stage: 'queued',
     percent: 0,
@@ -35,7 +37,6 @@ export function ProgressBar({ jobId, apiBase }: ProgressBarProps) {
 
         if (data.stage === 'complete' && data.fileReady) {
           es.close();
-          // Trigger file download
           window.location.href = `${apiBase}/api/jobs/${jobId}/file`;
         }
 
@@ -68,11 +69,11 @@ export function ProgressBar({ jobId, apiBase }: ProgressBarProps) {
 
   if (error) {
     return (
-      <div className="p-4 border border-red-200 bg-red-50 rounded-lg">
-        <p className="text-red-700 text-sm">{error}</p>
+      <div className="p-3 rounded-xl border border-red-500/30 bg-red-500/10">
+        <p className="text-red-400 text-sm">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="mt-2 text-sm text-blue-600 hover:underline"
+          className="mt-2 text-sm font-semibold text-emerald-400 hover:text-emerald-300"
         >
           Try again
         </button>
@@ -81,23 +82,36 @@ export function ProgressBar({ jobId, apiBase }: ProgressBarProps) {
   }
 
   return (
-    <div className="p-4 border rounded-lg bg-gray-50">
+    <div
+      className="p-3 rounded-xl border"
+      style={{ borderColor: `${color}30`, backgroundColor: `${color}08` }}
+    >
       <div className="flex justify-between text-sm mb-2">
-        <span className="text-gray-600">{stageLabel[progress.stage] || progress.stage}</span>
-        <span className="font-medium">{Math.round(progress.percent)}%</span>
+        <span className="text-gray-200 font-medium">
+          {stageLabel[progress.stage] || progress.stage}
+        </span>
+        <span className="font-bold" style={{ color }}>
+          {Math.round(progress.percent)}%
+        </span>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div className="w-full bg-gray-800 rounded-full h-2">
         <div
-          className="bg-blue-600 h-2.5 rounded-full transition-all duration-300"
-          style={{ width: `${Math.min(100, progress.percent)}%` }}
+          className="h-2 rounded-full transition-all duration-300"
+          style={{
+            width: `${Math.min(100, progress.percent)}%`,
+            backgroundColor: color,
+            boxShadow: `0 0 8px ${color}40`,
+          }}
         />
       </div>
-      <div className="flex justify-between text-xs text-gray-400 mt-1">
-        {progress.speed && <span>{progress.speed}</span>}
-        {progress.eta !== undefined && progress.eta > 0 && (
-          <span>~{progress.eta}s remaining</span>
-        )}
-      </div>
+      {(progress.speed || (progress.eta !== undefined && progress.eta > 0)) && (
+        <div className="flex justify-between text-xs text-gray-400 mt-1.5">
+          {progress.speed && <span>{progress.speed}</span>}
+          {progress.eta !== undefined && progress.eta > 0 && (
+            <span>~{progress.eta}s remaining</span>
+          )}
+        </div>
+      )}
     </div>
   );
 }

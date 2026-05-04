@@ -101,12 +101,12 @@ function FormatCard({
         <div
           className="flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center transition-colors"
           style={{
-            backgroundColor: isSelected ? `${accent}20` : '#1e293b',
+            backgroundColor: `${accent}20`,
           }}
         >
           <svg
             className="w-4 h-4"
-            style={{ color: isSelected ? accent : '#64748b' }}
+            style={{ color: accent }}
             fill="none"
             viewBox="0 0 24 24"
             stroke="currentColor"
@@ -128,9 +128,16 @@ export function FormatSelector({ formats, selected, onSelect, disabled, platform
 
   return (
     <div className="space-y-4">
-      <p className="text-xs text-gray-200 uppercase tracking-wider font-semibold">
-        Tap a format to download
-      </p>
+      <div className="flex items-center justify-between">
+        <p className="text-xs text-gray-200 uppercase tracking-wider font-semibold">
+          Tap a format to download
+        </p>
+        {disabled && (
+          <span className="text-xs animate-pulse" style={{ color: accent }}>
+            Starting download...
+          </span>
+        )}
+      </div>
 
       {videoFormats.length > 0 && (
         <div className="space-y-2">

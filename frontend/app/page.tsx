@@ -149,7 +149,17 @@ export default function HomePage() {
         </div>
       )}
 
-      {mediaInfo && !jobId && (
+      {jobId && (
+        <div className="mt-4">
+          <ProgressBar
+            jobId={jobId}
+            apiBase={API_BASE}
+            platformColor={detectedPlatform ? PLATFORM_COLORS[detectedPlatform] : undefined}
+          />
+        </div>
+      )}
+
+      {mediaInfo && (
         <div className="mt-6 space-y-4">
           <MediaPreview mediaInfo={mediaInfo} />
 
@@ -178,19 +188,7 @@ export default function HomePage() {
             platformColor={detectedPlatform ? PLATFORM_COLORS[detectedPlatform] : undefined}
           />
 
-          {downloading && (
-            <div className="flex justify-center">
-              <div className="animate-pulse text-cyan-400">Starting download...</div>
-            </div>
-          )}
-
           {HAS_TURNSTILE && <TurnstileWidget ref={turnstileRef} />}
-        </div>
-      )}
-
-      {jobId && (
-        <div className="mt-6">
-          <ProgressBar jobId={jobId} apiBase={API_BASE} />
         </div>
       )}
 
@@ -233,6 +231,61 @@ export default function HomePage() {
               </a>
             );
           })}
+        </div>
+      </div>
+
+      {/* SEO Content — How it works */}
+      <div className="mt-10 pt-6 border-t border-gray-800">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-1 h-6 rounded-full bg-gradient-to-b from-emerald-400 to-cyan-400" />
+          <h2 className="text-lg font-semibold text-gray-200">How to Download Videos</h2>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 text-sm">
+          <div className="p-4 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <div className="text-2xl mb-2">1</div>
+            <h3 className="font-semibold text-gray-200 mb-1">Paste the URL</h3>
+            <p className="text-gray-400">Copy the video link from any supported platform and paste it above.</p>
+          </div>
+          <div className="p-4 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <div className="text-2xl mb-2">2</div>
+            <h3 className="font-semibold text-gray-200 mb-1">Choose quality</h3>
+            <p className="text-gray-400">Pick your preferred format — HD, 4K, or audio only.</p>
+          </div>
+          <div className="p-4 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <div className="text-2xl mb-2">3</div>
+            <h3 className="font-semibold text-gray-200 mb-1">Download</h3>
+            <p className="text-gray-400">Tap the format and your video downloads instantly. No signup needed.</p>
+          </div>
+        </div>
+      </div>
+
+      {/* SEO Content — FAQ */}
+      <div className="mt-10 pt-6 border-t border-gray-800">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-1 h-6 rounded-full bg-gradient-to-b from-emerald-400 to-cyan-400" />
+          <h2 className="text-lg font-semibold text-gray-200">Frequently Asked Questions</h2>
+        </div>
+        <div className="space-y-4 text-sm">
+          <details className="group p-3 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <summary className="font-semibold text-gray-200 cursor-pointer">Is this video downloader free?</summary>
+            <p className="mt-2 text-gray-400">Yes, completely free. No signup, no hidden fees, no limits on downloads.</p>
+          </details>
+          <details className="group p-3 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <summary className="font-semibold text-gray-200 cursor-pointer">What platforms are supported?</summary>
+            <p className="mt-2 text-gray-400">YouTube, Instagram, TikTok, Twitter/X, Facebook, Reddit, Vimeo, Twitch, Pinterest, LinkedIn, and Dailymotion.</p>
+          </details>
+          <details className="group p-3 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <summary className="font-semibold text-gray-200 cursor-pointer">Can I download videos on my phone?</summary>
+            <p className="mt-2 text-gray-400">Yes, this tool works on any device with a browser — iPhone, Android, tablet, or desktop.</p>
+          </details>
+          <details className="group p-3 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <summary className="font-semibold text-gray-200 cursor-pointer">What quality can I download in?</summary>
+            <p className="mt-2 text-gray-400">Up to 4K for YouTube, and the highest available quality for other platforms. Audio-only downloads are also supported.</p>
+          </details>
+          <details className="group p-3 rounded-xl border border-gray-800 bg-[#0f172a]">
+            <summary className="font-semibold text-gray-200 cursor-pointer">Do I need to install anything?</summary>
+            <p className="mt-2 text-gray-400">No. This is a web-based tool. Just paste a URL and download — no apps, extensions, or software needed.</p>
+          </details>
         </div>
       </div>
 

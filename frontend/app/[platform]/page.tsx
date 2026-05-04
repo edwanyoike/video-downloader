@@ -152,7 +152,17 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
         </div>
       )}
 
-      {mediaInfo && !jobId && (
+      {jobId && (
+        <div className="mt-4">
+          <ProgressBar
+            jobId={jobId}
+            apiBase={API_BASE}
+            platformColor={PLATFORM_COLORS[platformId]}
+          />
+        </div>
+      )}
+
+      {mediaInfo && (
         <div className="mt-6 space-y-4">
           <MediaPreview mediaInfo={mediaInfo} />
 
@@ -181,25 +191,42 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
             platformColor={PLATFORM_COLORS[platformId]}
           />
 
-          {downloading && (
-            <div className="flex justify-center">
-              <div className="animate-pulse" style={{ color }}>Starting download...</div>
-            </div>
-          )}
-
           {HAS_TURNSTILE && <TurnstileWidget ref={turnstileRef} />}
         </div>
       )}
 
-      {jobId && (
-        <div className="mt-6">
-          <ProgressBar jobId={jobId} apiBase={API_BASE} />
+      {/* Other tools */}
+      <div className="mt-10 pt-6 border-t border-gray-800">
+        <div className="flex items-center gap-3 mb-4">
+          <div className="w-1 h-6 rounded-full bg-gradient-to-b from-emerald-400 to-cyan-400" />
+          <h2 className="text-lg font-semibold text-gray-200">Other Downloaders</h2>
         </div>
-      )}
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+          {Array.from(PLATFORM_REGISTRY.values())
+            .filter((p) => p.id !== platformId)
+            .map((p) => {
+              const c = PLATFORM_COLORS[p.id] || '#3b82f6';
+              return (
+                <a
+                  key={p.id}
+                  href={`/${p.id}`}
+                  className="flex items-center gap-2 p-2.5 rounded-xl border text-sm transition-all hover:scale-[1.02]"
+                  style={{ borderColor: `${c}30`, backgroundColor: `${c}08` }}
+                >
+                  <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: c }} />
+                  <span className="text-gray-300 font-medium">{p.displayName}</span>
+                </a>
+              );
+            })}
+        </div>
+      </div>
 
       <div className="mt-8 text-center">
-        <a href="/" className="text-sm font-bold text-emerald-400 hover:text-emerald-300 transition-colors">
-          ← All platforms
+        <a href="/" className="inline-flex items-center gap-2 text-sm font-bold text-emerald-400 hover:text-emerald-300 transition-colors">
+          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-4 0a1 1 0 01-1-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 01-1 1h-2z" />
+          </svg>
+          Back to all tools
         </a>
       </div>
     </main>
