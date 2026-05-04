@@ -123,7 +123,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
         <h1 className="text-3xl font-bold mb-1" style={{ color }}>
           {platformConfig.displayName} Downloader
         </h1>
-        <p className="text-gray-400 text-sm">
+        <p className="text-gray-300 text-sm">
           Paste a {platformConfig.displayName} video URL to download it.
         </p>
       </div>
@@ -178,6 +178,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
             selected={selectedFormat}
             onSelect={handleFormatSelect}
             disabled={downloading}
+            platformColor={PLATFORM_COLORS[platformId]}
           />
 
           {downloading && (

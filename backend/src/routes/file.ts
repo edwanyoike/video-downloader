@@ -63,8 +63,12 @@ export default async function fileRoutes(fastify: FastifyInstance) {
       const sanitized = sanitizeFilename(job.data.title || outputFile, ext);
       const contentType = mime.lookup(filePath) || 'application/octet-stream';
 
+      // Use ASCII-safe fallback + RFC 5987 encoded filename for Unicode support
+      const asciiFallback = sanitized.replace(/[^\x20-\x7E]/g, '_');
+      const encodedName = encodeURIComponent(sanitized).replace(/'/g, '%27');
+
       reply
-        .header('Content-Disposition', `attachment; filename="${sanitized}"`)
+        .header('Content-Disposition', `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encodedName}`)
         .header('Content-Type', contentType);
 
       // Stream the file

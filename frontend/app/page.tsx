@@ -119,7 +119,7 @@ export default function HomePage() {
         <h1 className="text-3xl font-bold mb-1 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
           Video Downloader
         </h1>
-        <p className="text-gray-400 text-sm">
+        <p className="text-gray-300 text-sm">
           Paste a video URL from any supported platform.
         </p>
       </div>
@@ -175,6 +175,7 @@ export default function HomePage() {
             selected={selectedFormat}
             onSelect={handleFormatSelect}
             disabled={downloading}
+            platformColor={detectedPlatform ? PLATFORM_COLORS[detectedPlatform] : undefined}
           />
 
           {downloading && (
