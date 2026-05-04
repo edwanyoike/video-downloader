@@ -11,15 +11,18 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  const hasTurnstile = !!process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY;
+
   return (
     <html lang="en">
       <head>
-        {/* Cloudflare Turnstile script */}
-        <script
-          src="https://challenges.cloudflare.com/turnstile/v0/api.js"
-          async
-          defer
-        />
+        {hasTurnstile && (
+          <script
+            src="https://challenges.cloudflare.com/turnstile/v0/api.js"
+            async
+            defer
+          />
+        )}
       </head>
       <body className="min-h-screen bg-background text-foreground antialiased">
         {children}

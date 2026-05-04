@@ -32,8 +32,27 @@ export const TurnstileWidget = forwardRef<TurnstileHandle>(function TurnstileWid
 
   const siteKey = process.env.NEXT_PUBLIC_TURNSTILE_SITE_KEY || '';
 
+  // If no site key, expose a getToken that returns empty string immediately
+  useImperativeHandle(ref, () => ({
+    getToken: () => {
+      if (!siteKey) return Promise.resolve('');
+      return new Promise<string>((resolve) => {
+        if (widgetIdRef.current && window.turnstile) {
+          window.turnstile.reset(widgetIdRef.current);
+        }
+        resolveRef.current = resolve;
+        setTimeout(() => {
+          if (resolveRef.current) {
+            resolveRef.current('');
+            resolveRef.current = null;
+          }
+        }, 10_000);
+      });
+    },
+  }));
+
   const renderWidget = useCallback(() => {
-    if (!window.turnstile || !containerRef.current || widgetIdRef.current) return;
+    if (!siteKey || !window.turnstile || !containerRef.current || widgetIdRef.current) return;
 
     widgetIdRef.current = window.turnstile.render(containerRef.current, {
       sitekey: siteKey,
@@ -72,25 +91,7 @@ export const TurnstileWidget = forwardRef<TurnstileHandle>(function TurnstileWid
     }
   }, [renderWidget]);
 
-  useImperativeHandle(ref, () => ({
-    getToken: () => {
-      return new Promise<string>((resolve) => {
-        if (widgetIdRef.current && window.turnstile) {
-          // Reset to get a fresh token
-          window.turnstile.reset(widgetIdRef.current);
-        }
-        resolveRef.current = resolve;
-
-        // If turnstile isn't loaded yet, resolve with empty string
-        setTimeout(() => {
-          if (resolveRef.current) {
-            resolveRef.current('');
-            resolveRef.current = null;
-          }
-        }, 10_000);
-      });
-    },
-  }));
+  if (!siteKey) return <div ref={containerRef} />;
 
   return <div ref={containerRef} />;
 });
