@@ -72,7 +72,25 @@ export default async function downloadRoutes(fastify: FastifyInstance) {
         });
       }
 
-      // 4. Enqueue download job
+      // 4. Check for recent duplicate job (same URL + format)
+      const dedupKey = `vd:dedup:${Buffer.from(`${validation.normalizedUrl}:${formatId}`).toString('base64url')}`;
+      try {
+        const existingJobId = await redis.get(dedupKey);
+        if (existingJobId) {
+          const existingJob = await downloadQueue.getJob(existingJobId);
+          if (existingJob) {
+            const state = await existingJob.getState();
+            if (state === 'completed' || state === 'active' || state === 'waiting') {
+              fastify.log.info({ jobId: existingJobId }, 'Reusing existing download job');
+              return reply.status(202).send({ jobId: existingJobId });
+            }
+          }
+        }
+      } catch {
+        // Dedup check failed — proceed with new job
+      }
+
+      // 5. Enqueue download job
       try {
         const jobData: DownloadJobData = {
           url: validation.normalizedUrl!,
@@ -89,6 +107,13 @@ export default async function downloadRoutes(fastify: FastifyInstance) {
           removeOnComplete: false,
           removeOnFail: false,
         });
+
+        // Store dedup mapping (expires in 5 minutes)
+        try {
+          await redis.set(dedupKey, String(job.id), 'EX', 300);
+        } catch {
+          // Don't fail if dedup store fails
+        }
 
         return reply.status(202).send({ jobId: job.id });
       } catch (err) {

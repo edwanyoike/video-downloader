@@ -118,17 +118,14 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
   }, [url, platformId, mediaInfo, downloadOptions, downloading]);
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-16">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold mb-3" style={{ color }}>
+    <main className="max-w-2xl mx-auto px-4 py-8">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold mb-1" style={{ color }}>
           {platformConfig.displayName} Downloader
         </h1>
-        <p className="text-gray-400">
+        <p className="text-gray-400 text-sm">
           Paste a {platformConfig.displayName} video URL to download it.
         </p>
-        <div className="mt-2 text-xs text-gray-500">
-          Accepted: {platformConfig.domains.join(', ')}
-        </div>
       </div>
 
       <UrlInput

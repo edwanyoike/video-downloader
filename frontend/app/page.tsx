@@ -113,26 +113,15 @@ export default function HomePage() {
   const platforms = Array.from(PLATFORM_REGISTRY.values());
 
   return (
-    <main className="max-w-2xl mx-auto px-4 py-16">
+    <main className="max-w-2xl mx-auto px-4 py-8">
       {/* Header */}
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-bold mb-3 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
+      <div className="text-center mb-6">
+        <h1 className="text-3xl font-bold mb-1 bg-gradient-to-r from-emerald-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
           Video Downloader
         </h1>
-        <p className="text-gray-400 text-lg">
-          Paste a video URL from any supported platform to download it.
+        <p className="text-gray-400 text-sm">
+          Paste a video URL from any supported platform.
         </p>
-        <div className="flex justify-center gap-2 mt-4">
-          <span className="text-xs px-3 py-1 rounded-full border border-emerald-500/30 text-emerald-400 bg-emerald-500/10">
-            No signup
-          </span>
-          <span className="text-xs px-3 py-1 rounded-full border border-cyan-500/30 text-cyan-400 bg-cyan-500/10">
-            No ads
-          </span>
-          <span className="text-xs px-3 py-1 rounded-full border border-blue-500/30 text-blue-400 bg-blue-500/10">
-            Free forever
-          </span>
-        </div>
       </div>
 
       {/* URL Input */}
@@ -205,7 +194,7 @@ export default function HomePage() {
       )}
 
       {/* Supported Platforms */}
-      <div className="mt-16 pt-8 border-t border-gray-800">
+      <div className="mt-10 pt-6 border-t border-gray-800">
         <div className="flex items-center gap-3 mb-6">
           <div className="w-1 h-6 rounded-full bg-gradient-to-b from-emerald-400 to-cyan-400" />
           <h2 className="text-lg font-semibold text-gray-200">Supported Platforms</h2>
@@ -247,7 +236,7 @@ export default function HomePage() {
       </div>
 
       {/* Footer */}
-      <div className="mt-12 text-center">
+      <div className="mt-8 text-center">
         <a
           href="https://evarein.com"
           className="text-xs text-gray-500 hover:text-emerald-400 transition-colors"

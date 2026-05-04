@@ -67,21 +67,20 @@ export function UrlInput({ platformId, onValidUrl, onSubmit, onClear }: UrlInput
     }
   };
 
-  const platformName = detectedPlatform
-    ? PLATFORM_REGISTRY.get(detectedPlatform)?.displayName
-    : null;
-
   const platformColor = detectedPlatform
-    ? PLATFORM_COLORS[detectedPlatform] || '#3b82f6'
-    : undefined;
+    ? PLATFORM_COLORS[detectedPlatform] || '#10b981'
+    : '#10b981';
+
+  const hasValidUrl = !validationError && value.trim() && detectedPlatform;
 
   return (
     <div>
       <div
-        className="relative rounded-xl border transition-all"
+        className="flex items-center rounded-xl border-2 transition-all overflow-hidden"
         style={{
-          borderColor: platformColor ? `${platformColor}50` : '#1e293b',
-          boxShadow: platformColor ? `0 0 20px ${platformColor}15` : 'none',
+          borderColor: hasValidUrl ? platformColor : '#10b981',
+          boxShadow: hasValidUrl ? `0 0 16px ${platformColor}25` : '0 0 16px rgba(16,185,129,0.1)',
+          backgroundColor: '#0f172a',
         }}
       >
         <input
@@ -90,42 +89,22 @@ export function UrlInput({ platformId, onValidUrl, onSubmit, onClear }: UrlInput
           onChange={handleChange}
           onKeyDown={handleKeyDown}
           placeholder="Paste video URL here..."
-          className="w-full px-4 py-4 rounded-xl bg-[#111827] text-gray-100 placeholder-gray-500 focus:outline-none text-base"
+          className="flex-1 min-w-0 px-4 py-3.5 bg-transparent text-white placeholder-gray-300 focus:outline-none text-sm"
           autoFocus
         />
-        {platformName && (
-          <span
-            className="absolute right-3 top-1/2 -translate-y-1/2 text-xs px-2.5 py-1 rounded-full font-medium"
-            style={{
-              backgroundColor: `${platformColor}20`,
-              color: platformColor,
-              border: `1px solid ${platformColor}40`,
-            }}
-          >
-            {platformName}
-          </span>
-        )}
-      </div>
-      {validationError && (
-        <p className="mt-2 text-sm text-red-400">{validationError}</p>
-      )}
-      {!validationError && value.trim() && detectedPlatform && (
         <button
           onClick={onSubmit}
-          className="mt-3 w-full py-3 px-4 font-medium rounded-xl transition-all text-white shadow-lg"
+          disabled={!hasValidUrl}
+          className="flex-shrink-0 px-4 py-3.5 text-sm font-semibold text-white transition-all disabled:opacity-30"
           style={{
-            background: `linear-gradient(135deg, ${platformColor}, ${platformColor}cc)`,
-            boxShadow: `0 4px 20px ${platformColor}30`,
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.boxShadow = `0 4px 30px ${platformColor}50`;
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.boxShadow = `0 4px 20px ${platformColor}30`;
+            backgroundColor: hasValidUrl ? platformColor : '#10b981',
           }}
         >
-          Get Video Info
+          Get Video
         </button>
+      </div>
+      {validationError && (
+        <p className="mt-2 text-xs text-red-400">{validationError}</p>
       )}
     </div>
   );
