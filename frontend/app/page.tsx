@@ -239,7 +239,9 @@ export default function HomePage() {
       <div className="mt-8 text-center">
         <a
           href="https://evarein.com"
-          className="text-xs text-gray-500 hover:text-emerald-400 transition-colors"
+          target="_blank"
+          rel="noopener noreferrer"
+          className="text-sm font-bold text-emerald-400 hover:text-emerald-300 transition-colors"
         >
           Part of EvareinSuite
         </a>

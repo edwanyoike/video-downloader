@@ -197,7 +197,7 @@ export default function PlatformPage({ params }: { params: Promise<{ platform: s
       )}
 
       <div className="mt-8 text-center">
-        <a href="/" className="text-sm text-gray-500 hover:text-emerald-400 transition-colors">
+        <a href="/" className="text-sm font-bold text-emerald-400 hover:text-emerald-300 transition-colors">
           ← All platforms
         </a>
       </div>
