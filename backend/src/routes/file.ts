@@ -60,12 +60,17 @@ export default async function fileRoutes(fastify: FastifyInstance) {
 
       const filePath = path.join(jobDir, outputFile);
       const ext = path.extname(outputFile).slice(1) || 'mp4';
-      const sanitized = sanitizeFilename(job.data.title || outputFile, ext);
+      const titleForFile = job.data.title || outputFile;
+      const sanitized = sanitizeFilename(titleForFile, ext);
+      // If sanitization stripped everything (hashtag-only titles), use platform + random code
+      const finalName = sanitized === `download.${ext.toLowerCase()}`
+        ? `${job.data.platformId}-${Math.random().toString(36).slice(2, 8)}.${ext.toLowerCase()}`
+        : sanitized;
       const contentType = mime.lookup(filePath) || 'application/octet-stream';
 
       // Use ASCII-safe fallback + RFC 5987 encoded filename for Unicode support
-      const asciiFallback = sanitized.replace(/[^\x20-\x7E]/g, '_');
-      const encodedName = encodeURIComponent(sanitized).replace(/'/g, '%27');
+      const asciiFallback = finalName.replace(/[^\x20-\x7E]/g, '_');
+      const encodedName = encodeURIComponent(finalName).replace(/'/g, '%27');
 
       reply
         .header('Content-Disposition', `attachment; filename="${asciiFallback}"; filename*=UTF-8''${encodedName}`)
