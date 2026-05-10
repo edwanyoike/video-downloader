@@ -14,7 +14,7 @@ const TEMP_DIR = process.env.TEMP_DIR || '/tmp/vd-jobs';
 const MAX_CONCURRENT_JOBS = parseInt(process.env.MAX_CONCURRENT_JOBS || '3', 10);
 const YTDLP_PATH = process.env.YTDLP_PATH || 'yt-dlp';
 const JOB_TIMEOUT_MS = 300_000;
-const FILE_CLEANUP_DELAY_MS = 60_000;
+const FILE_CLEANUP_DELAY_MS = 300_000; // 5 minutes — give user time to download
 const ORPHAN_CLEANUP_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
 export const downloadQueue = new Bull<DownloadJobData>('downloads', {

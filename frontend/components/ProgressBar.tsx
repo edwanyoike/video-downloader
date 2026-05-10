@@ -30,29 +30,22 @@ export function ProgressBar({ jobId, apiBase, platformColor }: ProgressBarProps)
     const es = new EventSource(`${apiBase}/api/jobs/${jobId}/progress`);
     eventSourceRef.current = es;
 
-    es.onmessage = async (event) => {
+    es.onmessage = (event) => {
       try {
         const data: ProgressData = JSON.parse(event.data);
         setProgress(data);
 
         if (data.stage === 'complete' && data.fileReady) {
           es.close();
-          // Verify file is available before triggering download
-          try {
-            const check = await fetch(`${apiBase}/api/jobs/${jobId}/file`, { method: 'HEAD' });
-            if (check.ok) {
-              const a = document.createElement('a');
-              a.href = `${apiBase}/api/jobs/${jobId}/file`;
-              a.download = '';
-              document.body.appendChild(a);
-              a.click();
-              document.body.removeChild(a);
-            } else {
-              setError('File not available. It may have expired. Please retry.');
-            }
-          } catch {
-            setError('Failed to download file. Please retry.');
-          }
+          // Trigger file download via hidden iframe to avoid navigation
+          const iframe = document.createElement('iframe');
+          iframe.style.display = 'none';
+          iframe.src = `${apiBase}/api/jobs/${jobId}/file`;
+          document.body.appendChild(iframe);
+          // Clean up iframe after download starts
+          setTimeout(() => {
+            document.body.removeChild(iframe);
+          }, 30_000);
         }
 
         if (data.stage === 'error') {
