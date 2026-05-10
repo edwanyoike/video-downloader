@@ -5,7 +5,6 @@ import path from 'node:path';
 import mime from 'mime-types';
 import { downloadQueue, getJobDir } from '../workers/downloadWorker.js';
 import { sanitizeFilename } from '../lib/sanitizeFilename.js';
-import { getClientIp } from '../plugins/rateLimiter.js';
 
 interface FileParams {
   jobId: string;
@@ -18,16 +17,11 @@ export default async function fileRoutes(fastify: FastifyInstance) {
     '/api/jobs/:jobId/file',
     async (req: FastifyRequest<{ Params: FileParams }>, reply: FastifyReply) => {
       const { jobId } = req.params;
-      const clientIp = getClientIp(req);
 
-      // Verify job exists and belongs to this IP
+      // Verify job exists
       const job = await downloadQueue.getJob(jobId);
       if (!job) {
         return reply.status(404).send({ error: 'JOB_NOT_FOUND', message: 'Job not found.' });
-      }
-
-      if (job.data.clientIp !== clientIp) {
-        return reply.status(403).send({ error: 'FORBIDDEN', message: 'Access denied.' });
       }
 
       const state = await job.getState();
