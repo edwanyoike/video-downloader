@@ -8,7 +8,6 @@ import { FormatSelector } from '@/components/FormatSelector';
 import { ProgressBar } from '@/components/ProgressBar';
 import { TurnstileWidget } from '@/components/TurnstileWidget';
 import { YouTubeSubtitleSelector } from '@/components/YouTubeSubtitleSelector';
-import { TikTokWatermarkToggle } from '@/components/TikTokWatermarkToggle';
 import type { MediaInfo, FormatOption } from '@/lib/types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_BASE || '';
@@ -168,14 +167,6 @@ export default function HomePage() {
               subtitles={mediaInfo.subtitles}
               onChange={(lang, fmt) =>
                 setDownloadOptions((prev) => ({ ...prev, subtitleLang: lang, subtitleFormat: fmt }))
-              }
-            />
-          )}
-
-          {detectedPlatform === 'tiktok' && (
-            <TikTokWatermarkToggle
-              onChange={(noWatermark) =>
-                setDownloadOptions((prev) => ({ ...prev, noWatermark }))
               }
             />
           )}

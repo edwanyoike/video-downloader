@@ -7,12 +7,13 @@ import type { DownloadJobData, JobProgressData } from '../types.js';
 import { classifyYtdlpError } from '../lib/ytdlpErrorMapper.js';
 import { PLATFORM_REGISTRY } from '../platforms/registry.js';
 import { parseRedisUrl } from '../lib/redisOpts.js';
+import { decrementConcurrentJobs, concurrentJobKey } from '../plugins/rateLimiter.js';
 
 const REDIS_URL = process.env.REDIS_URL || 'redis://localhost:6379';
 const TEMP_DIR = process.env.TEMP_DIR || '/tmp/vd-jobs';
 const MAX_CONCURRENT_JOBS = parseInt(process.env.MAX_CONCURRENT_JOBS || '3', 10);
 const YTDLP_PATH = process.env.YTDLP_PATH || 'yt-dlp';
-const JOB_TIMEOUT_MS = 60_000;
+const JOB_TIMEOUT_MS = 300_000;
 const FILE_CLEANUP_DELAY_MS = 60_000;
 const ORPHAN_CLEANUP_AGE_MS = 10 * 60 * 1000; // 10 minutes
 
@@ -70,9 +71,16 @@ downloadQueue.process(MAX_CONCURRENT_JOBS, async (job) => {
         '--merge-output-format', 'mp4',
       ];
 
+  // Speed optimizations: concurrent fragments, buffer size
+  const speedArgs = [
+    '--concurrent-fragments', '4',
+    '--buffer-size', '16K',
+    '--http-chunk-size', '10M',
+  ];
+
   // Add output template
   const outputTemplate = path.join(jobDir, '%(title)s.%(ext)s');
-  const args = [...ytdlpArgs, '-o', outputTemplate, url];
+  const args = [...ytdlpArgs, ...speedArgs, '-o', outputTemplate, url];
 
   return new Promise<string>((resolve, reject) => {
     const child = spawn(YTDLP_PATH, args, { shell: false, cwd: jobDir });
@@ -144,18 +152,25 @@ downloadQueue.process(MAX_CONCURRENT_JOBS, async (job) => {
   });
 });
 
-// Resource cleanup on job completion — delete temp dir after 60s
+// Resource cleanup on job completion — delete temp dir after 60s, decrement counter
 downloadQueue.on('completed', (job) => {
   const jobDir = path.join(TEMP_DIR, job.id.toString());
+  // Decrement concurrent job counter
+  const redis = new RedisLib.default(parseRedisUrl(REDIS_URL));
+  decrementConcurrentJobs(redis, job.data.clientIp).finally(() => redis.disconnect());
   setTimeout(() => {
     fs.rm(jobDir, { recursive: true, force: true }).catch(() => {});
   }, FILE_CLEANUP_DELAY_MS);
 });
 
-// Resource cleanup on job failure — delete temp dir immediately
+// Resource cleanup on job failure — delete temp dir immediately, decrement counter
 downloadQueue.on('failed', (job) => {
   if (!job) return;
   const jobDir = path.join(TEMP_DIR, job.id.toString());
+  // Decrement concurrent job counter
+  const redis = new RedisLib.default(parseRedisUrl(REDIS_URL));
+  decrementConcurrentJobs(redis, job.data.clientIp).finally(() => redis.disconnect());
+  fs.rm(jobDir, { recursive: true, force: true }).catch(() => {});
   fs.rm(jobDir, { recursive: true, force: true }).catch(() => {});
 });
 
